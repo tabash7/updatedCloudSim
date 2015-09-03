@@ -59,9 +59,11 @@ public class MapReduceEngine extends DatacenterBroker {
 
 	    // Set the MapReduce Engine referance to all tasks.
 	    for (Task task : request.job.mapTasks)
-		task.mapReduceEngine = this;
+	    task.mapReduceEngine = this;
 	    for (Task task : request.job.reduceTasks)
 		task.mapReduceEngine = this;
+//	    System.out.println(" Reference + :" + this);
+
 	}
     }
 

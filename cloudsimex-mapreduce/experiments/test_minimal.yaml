@@ -1,0 +1,21 @@
+!!org.cloudbus.cloudsim.ex.mapreduce.Experiment
+
+workloads:
+ - !!org.cloudbus.cloudsim.ex.mapreduce.Workload
+   [
+    LFFPerf, Public,
+      {
+        GOLD: 100.0,
+        SILVER: 60.0,
+        BRONZE: 0.0
+      },
+    [
+     #[Submission Time, Deadline, Budget, Job, user class]
+     !!org.cloudbus.cloudsim.ex.mapreduce.models.request.Request
+     [200000, 4000, 10.5, MapReduce_2_1.yaml, GOLD],
+     !!org.cloudbus.cloudsim.ex.mapreduce.models.request.Request
+     [500000, 4000, 10.5, MapReduce_3_1.yaml, GOLD],
+     !!org.cloudbus.cloudsim.ex.mapreduce.models.request.Request
+     [600000, 4100, 10.5, MapReduce_9_2.yaml, GOLD]
+    ]
+   ]

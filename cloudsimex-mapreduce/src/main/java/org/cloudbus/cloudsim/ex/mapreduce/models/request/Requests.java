@@ -3,6 +3,7 @@ package org.cloudbus.cloudsim.ex.mapreduce.models.request;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cloudbus.cloudsim.ex.mapreduce.WorkloadRequestFromFile;
 import org.cloudbus.cloudsim.ex.mapreduce.models.cloud.VmInstance;
 
 public class Requests {
@@ -14,7 +15,16 @@ public class Requests {
 	this.requests = requests;
     }
 
-    public Request getRequestFromTaskId(int taskId)
+//    public Requests(ArrayList<WorkloadRequestFromFile> requests2) {
+//		// TODO Auto-generated constructor stub
+//    	if(!requests2.isEmpty()){
+//    		
+//    		System.err.println("request is arrived");
+//    		
+//    	}
+//	}
+
+	public Request getRequestFromTaskId(int taskId)
     {
 	for (Request request : requests) {
 	    for (MapTask mapTask : request.job.mapTasks) {

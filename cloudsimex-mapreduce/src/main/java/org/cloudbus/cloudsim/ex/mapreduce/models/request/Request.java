@@ -23,28 +23,26 @@ public class Request extends SimEvent {
     public double deadline;
     public Job job;
     public UserClass userClass;
-
+    public String userClassValue;
+    /*
+     * added by tabash
+     */
+    public static MapTask maptask;
+    public static ReduceTask reducetask;
+    public Map<String, Integer> intermediateData;
     public List<VmInstance> mapAndReduceVmProvisionList;
     public List<VmInstance> reduceOnlyVmProvisionList;
-
     public Map<Integer, Integer> schedulingPlan; // <Task ID, VM ID>
-
     public String policy;
     public String jobFile;
-
     private int experimentNumber;
     private int workloadNumber;
-    
     private Long algoStartTime = null;
     private Long algoFirstSoulationFoundedTime = null;
     private Long algorithRunningTime = null;
-
     private CloudDeploymentModel cloudDeploymentModel = CloudDeploymentModel.Hybrid;
-
     private String logMessage = "";
     
-    
-
     public Request(double submissionTime, double deadline, double budget, String jobFile, UserClass userClass) {
 	id = Id.pollId(Request.class);
 	this.submissionTime = submissionTime;
@@ -56,24 +54,75 @@ public class Request extends SimEvent {
 	mapAndReduceVmProvisionList = new ArrayList<VmInstance>();
 	reduceOnlyVmProvisionList = new ArrayList<VmInstance>();
 	schedulingPlan = new HashMap<Integer, Integer>();
-
-	job = readJobYAML(this.jobFile);
+	
+//	this.policy = policy;
+//	job = readJobYAML(this.jobFile);
 	// Add Extra Map Tasks
+//	System.err.println(job.))
+	job = new Job();	
+    intermediateData = new HashMap<String, Integer>();
+    this.intermediateData.put("reduce-1", 1000);
+//    this.intermediateData.put("reduce-2", 10000);
+	List<MapTask> MT = new ArrayList<MapTask>();
+	List<ReduceTask> RT = new ArrayList<ReduceTask>();
+	// #tasks, Dsize, MI, intermediateData
+	MT.add(new MapTask(1, 100, 64, intermediateData));
+	// Name, MI
+	RT.add(new ReduceTask("reduce-1", 1000));
+//	RT.add(new ReduceTask("reduce-2", 10000));
+	String dataSourceName = "S3-sensors";
+	job.setDataSourceName(dataSourceName);
+	job.setMapTasks(MT);
+	job.setReduceTasks(RT);
+//    job.dataSourceName = "S3-sensors";
+    
+//	maptask = new MapTask(1, 100, 64, intermediateData);
+	
+//	job.mapTasks = new ();
+	
+//	reducetask = new ReduceTask("reduce", 1000);
+	
 	List<MapTask> copyOfMapTasks = new ArrayList<MapTask>(job.mapTasks);
 	for (MapTask mapTask : copyOfMapTasks) {
+		System.err.println("Map Task");
 	    for (int i = mapTask.extraTasks; i > 0; i--)
 		job.mapTasks.add(new MapTask(1, mapTask.dSize, mapTask.mi, mapTask.intermediateData));
 	}
 	// Set Request Id and data source name in all Map Tasks
 	for (MapTask mapTask : job.mapTasks) {
+		System.err.println("Set ID TO all Map Tasks");
+
 	    mapTask.requestId = id;
 	    mapTask.dataSourceName = job.dataSourceName;
 	}
 	// Set Request Id and data size in all Reduce Tasks
 	for (ReduceTask reduceTask : job.reduceTasks) {
+		System.err.println("Reduce Task");
+
 	    reduceTask.requestId = id;
 	    reduceTask.updateDSize(this);
 	}
+	
+//	List<MapTask> copyOfMapTasks = new ArrayList<MapTask>(job.mapTasks);
+//	for (MapTask mapTask : copyOfMapTasks) {
+//		//System.err.println("Map Task");
+//	    for (int i = mapTask.extraTasks; i > 0; i--)
+//		job.mapTasks.add(new MapTask(1, mapTask.dSize, mapTask.mi, mapTask.intermediateData));
+//	}
+//	// Set Request Id and data source name in all Map Tasks
+//	for (MapTask mapTask : job.mapTasks) {
+//		System.err.println("Set ID TO all Map Tasks");
+//
+//	    mapTask.requestId = id;
+//	    mapTask.dataSourceName = job.dataSourceName;
+//	}
+//	// Set Request Id and data size in all Reduce Tasks
+//	for (ReduceTask reduceTask : job.reduceTasks) {
+//	//	System.err.println("Reduce Task");
+//
+//	    reduceTask.requestId = id;
+//	    reduceTask.updateDSize(this);
+//	}
     }
 
     public Request(double submissionTime, double deadline, double budget, Job job, String jobFile, UserClass userClass,
@@ -81,6 +130,8 @@ public class Request extends SimEvent {
 	    Map<Integer, Integer> schedulingPlan, int experimentNumber, int workloadNumber,
 	    CloudDeploymentModel cloudDeploymentModel, String logMessage)
     {
+		System.err.println("Inside second Request in Request Class");
+
 	id = Id.pollId(Request.class);
 	this.submissionTime = submissionTime;
 	this.budget = budget;
